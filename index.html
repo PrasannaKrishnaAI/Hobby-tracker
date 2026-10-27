@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hobby Log">
+<meta name="theme-color" content="#EFEEE8">
+<title>Hobby Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EFEEE8;--surface:#FAF9F5;--ink:#17211E;--mute:#66706B;--line:#D9D8CF;--accent:#1F6F5C;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#121816;--surface:#1B2320;--ink:#E8EEEA;--mute:#93A09A;--line:#2B3631;--accent:#58C0A4}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.4}
+#app{max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 20px) 18px calc(env(safe-area-inset-bottom,0px) + 96px)}
+h1{font-size:30px;line-height:1.1;font-weight:800;letter-spacing:-.02em;margin:6px 0 16px}
+h2{font-size:17px;font-weight:600;margin:28px 0 10px}
+.mute{color:var(--mute);font-size:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.item{border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.row{display:flex;align-items:center;gap:12px;padding:12px 0}
+button.link{background:none;border:0;min-width:0;height:36px;padding:0;margin:-4px 0 6px 24px;color:var(--mute);font-size:14px}
+.wish{margin:0 0 12px 24px}
+.wi{display:flex;align-items:center;gap:4px}
+.wi .wt{flex:1;min-width:0;overflow-wrap:anywhere}
+.wi .wt.done{color:var(--mute);text-decoration:line-through}
+.wi button{min-width:44px;height:44px;border:0;background:none;padding:0}
+.wi .chk{font-size:20px;color:var(--mute)}
+.wi .chk.on{color:var(--accent);font-weight:800}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.nm{flex:1;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.step{display:flex;align-items:center;gap:6px}
+button,input,textarea{font:inherit;color:inherit}
+button{background:var(--bg);border:1px solid var(--line);border-radius:10px;min-width:44px;height:44px;padding:0 12px;cursor:pointer}
+button:active{transform:scale(.96)}
+button.pri{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}
+button.danger{color:#C0392B}
+input[type=number],input[type=text],input[type=date],textarea{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;font-size:16px}
+.step input{width:64px;text-align:center;padding:10px 4px}
+textarea{resize:vertical;min-height:84px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.total{display:flex;justify-content:space-between;margin:14px 2px 0;font-weight:600}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat b{display:block;font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.bars{display:flex;align-items:flex-end;gap:8px;height:130px}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:6px}
+.stack{width:100%;display:flex;flex-direction:column-reverse;border-radius:6px;overflow:hidden;min-height:2px;background:var(--line)}
+.stack i{display:block}
+.col span{font-size:12px;color:var(--mute)}
+.meter{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:8px}
+.meter div{height:100%;border-radius:4px}
+.grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:4px}
+.cell{aspect-ratio:1;border-radius:4px;background:var(--line);opacity:.5}
+.cell.on{opacity:1}
+.hrow{display:grid;grid-template-columns:44px 1fr 72px 44px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.hrow:last-child{border-bottom:0}
+.hrow input[type=color]{width:44px;height:44px;padding:2px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
+.hrow input[type=number]{padding:10px 6px;text-align:center}
+.add{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:12px}
+.insight{padding:10px 0;border-bottom:1px solid var(--line)}
+.insight:last-child{border-bottom:0}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;padding:8px 12px calc(env(safe-area-inset-bottom,0px) + 8px)}
+nav div{display:flex;gap:6px;width:100%;max-width:520px}
+nav button{flex:1;border:0;background:transparent;color:var(--mute);font-weight:600}
+nav button.on{background:var(--bg);color:var(--ink)}
+.empty{padding:18px 0;color:var(--mute)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav><div>
+  <button data-tab="today">Today</button>
+  <button data-tab="progress">Progress</button>
+  <button data-tab="hobbies">Hobbies</button>
+</div></nav>
+
+<script>
+(function(){
+const KEY='hobby-log-v1';
+const COLORS=['#1F6F5C','#C8553D','#3D5A9E','#B8860B','#7B4F9E','#2A9D8F','#D1495B','#5C6B73'];
+
+/* ---------- storage ---------- */
+function seed(){return{hobbies:[
+  {id:'h1',name:'Reading',color:COLORS[2],goal:210},
+  {id:'h2',name:'Writing',color:COLORS[0],goal:150},
+  {id:'h3',name:'Music',color:COLORS[1],goal:120}],logs:{}}}
+function load(){
+  try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.hobbies)&&s.logs)return s}catch(e){}
+  return seed();
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+let db=load();
+
+/* ---------- dates ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const addDays=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+const parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const monday=d=>addDays(d,-((d.getDay()+6)%7));
+const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const today=()=>{const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate())};
+
+/* ---------- data helpers ---------- */
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mins=(k,id)=>(((db.logs[k]||{}).m)||{})[id]||0;
+const dayTotal=k=>db.hobbies.reduce((a,h)=>a+mins(k,h.id),0);
+function sum(start,n,id){let t=0;for(let i=0;i<n;i++){const k=iso(addDays(start,i));t+=id?mins(k,id):dayTotal(k)}return t}
+function fmt(m){if(m<60)return m+'m';const h=Math.floor(m/60),r=m%60;return h+'h'+(r?' '+r+'m':'')}
+function setMins(k,id,v){
+  const l=db.logs[k]||(db.logs[k]={m:{},note:''});
+  l.m[id]=Math.max(0,Math.min(1440,Math.round(v)||0));
+  if(!l.m[id])delete l.m[id];
+  save();
+}
+
+/* ---------- state ---------- */
+let tab='today',day=iso(today());
+const app=document.getElementById('app');
+
+/* ---------- wishlist ---------- */
+const open={};
+function wishHTML(x){
+  const w=x.wish||[],pending=w.filter(i=>!i.done).length,isOpen=!!open[x.id];
+  let h='<button class="link" data-a="wtog" data-id="'+x.id+'" aria-expanded="'+isOpen+'">Want to ('+pending+') '+(isOpen?'&#9652;':'&#9662;')+'</button>';
+  if(!isOpen)return h;
+  h+='<div class="wish">';
+  const sorted=w.filter(i=>!i.done).concat(w.filter(i=>i.done));
+  if(!sorted.length)h+='<div class="mute" style="padding-bottom:6px">Nothing here yet. Add something you want to try, read, learn or make.</div>';
+  sorted.forEach(i=>{
+    h+='<div class="wi"><button class="chk'+(i.done?' on':'')+'" data-a="wdone" data-id="'+x.id+'" data-w="'+i.id+'" aria-label="'+(i.done?'Mark as not done':'Mark as done')+'">'+(i.done?'&#10003;':'&#9675;')+'</button>'
+      +'<span class="wt'+(i.done?' done':'')+'">'+esc(i.text)+'</span>'
+      +'<button data-a="wdel" data-id="'+x.id+'" data-w="'+i.id+'" aria-label="Remove item">&times;</button></div>';
+  });
+  h+='<div class="add"><input type="text" id="wn-'+x.id+'" data-a="wnew" data-id="'+x.id+'" placeholder="Add a want-to item" maxlength="80"><button class="pri" data-a="wadd" data-id="'+x.id+'">Add</button></div></div>';
+  return h;
+}
+function wishLine(x){
+  const w=x.wish||[];if(!w.length)return'';
+  const d=w.filter(i=>i.done).length;
+  return'<div class="mute" style="margin-top:2px">Want-to list: '+d+' done, '+(w.length-d)+' to go</div>';
+}
+function addWish(id){
+  const inp=document.getElementById('wn-'+id);if(!inp)return;
+  const t=inp.value.trim();if(!t)return inp.focus();
+  const x=db.hobbies.find(z=>z.id===id);if(!x)return;
+  (x.wish=x.wish||[]).push({id:'w'+Date.now().toString(36),text:t,done:false});
+  save();render();
+  const n=document.getElementById('wn-'+id);if(n)n.focus();
+}
+
+/* ---------- views ---------- */
+function viewToday(){
+  const isToday=day===iso(today());
+  const title=isToday?'What did you do today?':'What did you do on '+DAYS[parse(day).getDay()]+' '+parse(day).getDate()+'?';
+  let h='<h1>'+title+'</h1>';
+  h+='<input type="date" data-a="date" value="'+day+'" max="'+iso(today())+'" aria-label="Date">';
+  if(!db.hobbies.length){
+    h+='<p class="empty">Add a hobby first on the Hobbies tab.</p>';
+  }else{
+    h+='<div class="card" style="margin-top:14px">';
+    db.hobbies.forEach(x=>{
+      const v=mins(day,x.id);
+      h+='<div class="item"><div class="row"><span class="dot" style="background:'+x.color+'"></span><span class="nm">'+esc(x.name)+'</span>'
+        +'<div class="step"><button data-a="dec" data-id="'+x.id+'" aria-label="Subtract 15 minutes">&minus;</button>'
+        +'<input type="number" inputmode="numeric" min="0" placeholder="0" data-a="set" data-id="'+x.id+'" value="'+(v||'')+'" aria-label="Minutes for '+esc(x.name)+'">'
+        +'<button data-a="inc" data-id="'+x.id+'" aria-label="Add 15 minutes">+15</button></div></div>'+wishHTML(x)+'</div>';
+    });
+    h+='</div><div class="total"><span>Total</span><span>'+fmt(dayTotal(day))+'</span></div>';
+  }
+  const note=(db.logs[day]||{}).note||'';
+  h+='<h2>Notes</h2><textarea data-a="note" placeholder="Anything worth remembering from this day">'+esc(note)+'</textarea>';
+  h+='<p class="mute">Saved automatically on this device.</p>';
+  return h;
+}
+
+function viewProgress(){
+  const t=today(),ws=monday(t),elapsed=Math.round((t-ws)/864e5)+1;
+  const thisW=sum(ws,elapsed),lastSame=sum(addDays(ws,-7),elapsed);
+  let d=t;if(dayTotal(iso(d))===0)d=addDays(d,-1);
+  let streak=0;while(dayTotal(iso(d))>0){streak++;d=addDays(d,-1)}
+  const diff=thisW-lastSame;
+  const cmp=lastSame===0?(thisW?'First active week':'Nothing logged yet'):(diff===0?'Same as last week':(diff>0?'Up ':'Down ')+fmt(Math.abs(diff))+' on same days last week');
+
+  let h='<h1>Progress</h1><div class="stats">'
+    +'<div class="card stat"><b>'+fmt(thisW)+'</b><span class="mute">This week</span><div class="mute" style="margin-top:6px">'+cmp+'</div></div>'
+    +'<div class="card stat"><b>'+streak+(streak===1?' day':' days')+'</b><span class="mute">Current streak</span></div></div>';
+
+  // last 7 days
+  const days=[];for(let i=6;i>=0;i--)days.push(addDays(t,-i));
+  const max=Math.max(60,...days.map(x=>dayTotal(iso(x))));
+  h+='<h2>Last 7 days</h2><div class="card"><div class="bars">';
+  days.forEach(x=>{
+    const k=iso(x),tot=dayTotal(k);
+    h+='<div class="col"><div class="stack" style="height:'+(tot/max*100)+'%" title="'+fmt(tot)+'">'
+      +db.hobbies.map(y=>mins(k,y.id)?'<i style="flex:'+mins(k,y.id)+';background:'+y.color+'"></i>':'').join('')
+      +'</div><span>'+DAYS[x.getDay()][0]+'</span></div>';
+  });
+  h+='</div></div>';
+
+  // per hobby
+  h+='<h2>By hobby</h2>';
+  if(!db.hobbies.length)h+='<p class="empty">No hobbies yet.</p>';
+  db.hobbies.forEach(x=>{
+    const wk=sum(ws,elapsed,x.id),m30=sum(addDays(t,-29),30,x.id),p30=sum(addDays(t,-59),30,x.id);
+    const pct=x.goal?Math.min(100,wk/x.goal*100):0;
+    let trend='No time logged before this';
+    if(p30>0){const c=Math.round((m30-p30)/p30*100);trend=c===0?'Same as the previous 30 days':(c>0?'Up ':'Down ')+Math.abs(c)+'% on the previous 30 days'}
+    else if(m30===0)trend='Nothing in the last 60 days';
+    h+='<div class="card" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;gap:8px"><b><span class="dot" style="background:'+x.color+';display:inline-block;margin-right:8px"></span>'+esc(x.name)+'</b><span>'+fmt(m30)+' <span class="mute">in 30 days</span></span></div>'
+      +'<div class="mute" style="margin-top:4px">'+trend+'</div>'
+      +wishLine(x)+(x.goal?'<div class="meter"><div style="width:'+pct+'%;background:'+x.color+'"></div></div><div class="mute" style="margin-top:6px">'+fmt(wk)+' of '+fmt(x.goal)+' weekly goal</div>':'')
+      +'</div>';
+  });
+
+  // 12-week grid
+  const gs=addDays(ws,-77);
+  h+='<h2>Last 12 weeks</h2><div class="card"><div class="grid" role="img" aria-label="Activity grid for the last 12 weeks">';
+  for(let w=0;w<12;w++)for(let r=0;r<7;r++){
+    const dt=addDays(gs,w*7+r),k=iso(dt);
+    if(dt>t){h+='<div class="cell" style="opacity:.15"></div>';continue}
+    const tot=dayTotal(k);
+    if(!tot){h+='<div class="cell"></div>';continue}
+    let best=null,bm=0;db.hobbies.forEach(y=>{const v=mins(k,y.id);if(v>bm){bm=v;best=y}});
+    h+='<div class="cell on" title="'+k+': '+fmt(tot)+'" style="background:'+(best?best.color:'var(--accent)')+';opacity:'+(.3+.7*Math.min(1,tot/90))+'"></div>';
+  }
+  h+='</div><p class="mute" style="margin:10px 0 0">Each square is a day, coloured by your main hobby that day. Darker means more time.</p></div>';
+
+  // insights
+  const ins=[];
+  const wd=[0,0,0,0,0,0,0];for(let i=0;i<84;i++){const x=addDays(t,-i);wd[x.getDay()]+=dayTotal(iso(x))}
+  const bi=wd.indexOf(Math.max(...wd));
+  if(wd[bi]>0)ins.push('Your most active weekday is '+['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][bi]+'.');
+  let top=null,tm=0;db.hobbies.forEach(x=>{const v=sum(addDays(t,-29),30,x.id);if(v>tm){tm=v;top=x}});
+  if(top)ins.push('Most time in the last 30 days: '+esc(top.name)+' ('+fmt(tm)+').');
+  db.hobbies.forEach(x=>{
+    if(sum(addDays(t,-29),30,x.id)===0)return;
+    let gap=0;while(gap<60&&mins(iso(addDays(t,-gap)),x.id)===0)gap++;
+    if(gap>=3&&gap<60)ins.push(esc(x.name)+': '+gap+' days since your last session.');
+  });
+  const act=Array.from({length:30},(_,i)=>dayTotal(iso(addDays(t,-i)))>0).filter(Boolean).length;
+  if(act)ins.push('You logged activity on '+act+' of the last 30 days.');
+  h+='<h2>Insights</h2><div class="card">'+(ins.length?ins.map(s=>'<div class="insight">'+s+'</div>').join(''):'<div class="empty">Log a few days and insights will show up here.</div>')+'</div>';
+  return h;
+}
+
+function viewHobbies(){
+  let h='<h1>Hobbies</h1><p class="mute" style="margin-top:-6px">Colour, name and weekly goal in minutes.</p><div class="card">';
+  if(!db.hobbies.length)h+='<div class="empty">No hobbies yet.</div>';
+  db.hobbies.forEach(x=>{
+    h+='<div class="hrow"><input type="color" data-a="hcolor" data-id="'+x.id+'" value="'+x.color+'" aria-label="Colour">'
+      +'<input type="text" data-a="hname" data-id="'+x.id+'" value="'+esc(x.name)+'" aria-label="Name">'
+      +'<input type="number" inputmode="numeric" min="0" data-a="hgoal" data-id="'+x.id+'" value="'+(x.goal||'')+'" placeholder="Goal" aria-label="Weekly goal in minutes">'
+      +'<button class="danger" data-a="hdel" data-id="'+x.id+'" aria-label="Delete '+esc(x.name)+'">&times;</button></div>';
+  });
+  h+='</div><div class="add"><input type="text" id="newName" placeholder="New hobby" maxlength="40"><button class="pri" data-a="hadd">Add hobby</button></div>';
+  h+='<h2>Backup</h2><p class="mute">Your data lives in this browser only. Export a copy now and then, and import it to move to another device.</p>'
+    +'<div style="display:flex;gap:8px"><button data-a="export">Export backup</button><button data-a="import">Import backup</button></div>'
+    +'<input type="file" id="file" accept="application/json" hidden>';
+  return h;
+}
+
+/* ---------- render ---------- */
+function render(){
+  const y=window.scrollY;
+  app.innerHTML=tab==='today'?viewToday():tab==='progress'?viewProgress():viewHobbies();
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  window.scrollTo(0,y);
+}
+
+/* ---------- events ---------- */
+document.querySelector('nav').addEventListener('click',e=>{
+  const b=e.target.closest('[data-tab]');if(!b)return;
+  tab=b.dataset.tab;render();window.scrollTo(0,0);
+});
+app.addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');if(!b||b.tagName!=='BUTTON')return;
+  const a=b.dataset.a,id=b.dataset.id;
+  if(a==='inc'){setMins(day,id,mins(day,id)+15);render()}
+  else if(a==='dec'){setMins(day,id,mins(day,id)-15);render()}
+  else if(a==='wtog'){open[id]=!open[id];render()}
+  else if(a==='wadd'){addWish(id)}
+  else if(a==='wdone'||a==='wdel'){
+    const x=db.hobbies.find(z=>z.id===id),w=x&&(x.wish||[]).find(i=>i.id===b.dataset.w);
+    if(!w)return;
+    if(a==='wdone'){w.done=!w.done;if(w.done)w.doneOn=iso(today());else delete w.doneOn}
+    else x.wish=x.wish.filter(i=>i!==w);
+    save();render();
+  }
+  else if(a==='hadd'){
+    const inp=document.getElementById('newName'),n=inp.value.trim();if(!n)return inp.focus();
+    db.hobbies.push({id:'h'+Date.now().toString(36),name:n,color:COLORS[db.hobbies.length%COLORS.length],goal:0});
+    save();render();
+  }else if(a==='hdel'){
+    const x=db.hobbies.find(z=>z.id===id);
+    if(x&&confirm('Delete "'+x.name+'"? Its logged time will no longer count in progress.')){
+      db.hobbies=db.hobbies.filter(z=>z.id!==id);save();render();
+    }
+  }else if(a==='export'){
+    const url=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));
+    const l=document.createElement('a');l.href=url;l.download='hobby-log-'+iso(today())+'.json';
+    document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }else if(a==='import'){document.getElementById('file').click()}
+});
+app.addEventListener('change',e=>{
+  const t=e.target,a=t.dataset.a,id=t.dataset.id;
+  if(t.id==='file'){
+    const f=t.files[0];if(!f)return;
+    f.text().then(s=>{
+      try{
+        const d=JSON.parse(s);
+        if(!d||!Array.isArray(d.hobbies)||typeof d.logs!=='object')throw 0;
+        if(confirm('Replace the data on this device with this backup?')){db=d;save();render()}
+      }catch(x){alert('That file is not a valid Hobby Log backup.')}
+    });
+    return;
+  }
+  if(!a)return;
+  if(a==='date'){if(t.value){day=t.value;render()}}
+  else if(a==='set'){setMins(day,id,parseFloat(t.value));render()}
+  else if(a==='hname'){const x=db.hobbies.find(z=>z.id===id);if(x&&t.value.trim()){x.name=t.value.trim();save()}else render()}
+  else if(a==='hgoal'){const x=db.hobbies.find(z=>z.id===id);if(x){x.goal=Math.max(0,parseInt(t.value)||0);save()}}
+  else if(a==='hcolor'){const x=db.hobbies.find(z=>z.id===id);if(x){x.color=t.value;save()}}
+});
+app.addEventListener('input',e=>{
+  if(e.target.dataset.a==='note'){
+    const l=db.logs[day]||(db.logs[day]={m:{},note:''});
+    l.note=e.target.value;save();
+  }
+});
+app.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target.dataset.a==='wnew'){e.preventDefault();addWish(e.target.dataset.id)}
+});
+
+render();
+})();
+</script>
+</body>
+</html>
